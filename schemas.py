@@ -2,20 +2,29 @@
 Database Schemas
 
 Define your MongoDB collection schemas here using Pydantic models.
-These schemas are used for data validation in your application.
-
 Each Pydantic model represents a collection in your database.
+
 Model name is converted to lowercase for the collection name:
 - User -> "user" collection
 - Product -> "product" collection
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
 
-# Example schemas (replace with your own):
+# Business schema for inquiries
+class Inquiry(BaseModel):
+    """
+    Client inquiries / quote requests
+    Collection name: "inquiry"
+    """
+    name: str = Field(..., description="Client name")
+    email: EmailStr = Field(..., description="Client email")
+    service: str = Field(..., description="Requested service (Photos, 3D Matterport, Video, Drone, Twilight)")
+    message: Optional[str] = Field(None, description="Notes: address, preferred date, sqft, etc.")
 
+# Example schemas (kept for reference/demo)
 class User(BaseModel):
     """
     Users collection schema
@@ -37,12 +46,3 @@ class Product(BaseModel):
     price: float = Field(..., ge=0, description="Price in dollars")
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
-
-# Add your own schemas here:
-# --------------------------------------------------
-
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
